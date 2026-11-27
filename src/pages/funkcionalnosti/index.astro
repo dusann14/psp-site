@@ -1,0 +1,56 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import Cta from '../../components/Cta.astro';
+import { url, demoHref, SITE } from '../../config';
+import { features } from '../../data/features';
+import { screen } from '../../data/screens';
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: features.map((f, i) => ({ '@type': 'ListItem', position: i + 1, name: f.name, url: new URL(url(`/funkcionalnosti/${f.slug}/`), Astro.site).href }))
+}];
+---
+<Base title="Funkcionalnosti" description={`Sve funkcionalnosti aplikacije ${SITE.name}: predmeti, fakturisanje i SEF, troškovi sa fiskalnih računa, dokumenti, tim i odmori, bezbednost i audit.`} jsonLd={jsonLd}>
+  <PageHero eyebrow="Funkcionalnosti" title="Šest celina," accent="jedan sistem." lead="Svaka celina rešava jedan deo posla, a zajedno pokrivaju ceo put od prvog sastanka sa klijentom do naplaćene fakture." crumbs={[{ href: url('/funkcionalnosti/'), label: 'Funkcionalnosti' }]}>
+    <div slot="actions"><a href={demoHref} class="btn btn-primary">Zakaži demo <Icon name="arrow" /></a></div>
+    <div class="spacer"></div>
+  </PageHero>
+  <section class="list">
+    <div class="container rows">
+      {features.map((f, i) => (
+        <a href={url(`/funkcionalnosti/${f.slug}/`)} class:list={['row', 'reveal', { flip: i % 2 === 1 }]}>
+          <div class="copy">
+            <span class="ico"><Icon name={f.icon} size={24} /></span>
+            <h2 class="h-2">{f.name}</h2>
+            <p class="lead">{f.short}</p>
+            <ul>{f.benefits.slice(0, 3).map((b) => <li><Icon name="check" size={18} />{b.title}</li>)}</ul>
+            <span class="more">Detaljnije <Icon name="arrow" size={16} /></span>
+          </div>
+          <div class="shot"><Picture src={screen(f.screen)} alt={`${f.name} u aplikaciji PSP`} formats={['avif', 'webp']} widths={[640, 960, 1440, 2000]} sizes="(max-width: 1023px) 100vw, 680px" loading={i === 0 ? 'eager' : 'lazy'} /></div>
+        </a>
+      ))}
+    </div>
+  </section>
+  <Cta />
+</Base>
+<style>
+  .spacer { height: clamp(72px, 10vw, 120px); }
+  .list { margin-top: -40px; position: relative; z-index: 1; padding-bottom: 40px; }
+  .rows { display: grid; gap: 28px; }
+  .row { display: grid; grid-template-columns: 1fr 1.25fr; gap: clamp(28px, 5vw, 64px); align-items: center; padding: clamp(24px, 4vw, 48px); border-radius: var(--radius-xl); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s; }
+  .row:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .row.flip .copy { order: 2; }
+  .copy { display: grid; gap: 14px; justify-items: start; }
+  .ico { width: 50px; height: 50px; border-radius: 15px; display: grid; place-items: center; background: var(--mint-soft); color: var(--brand-600); }
+  ul { list-style: none; padding: 0; display: grid; gap: 8px; }
+  li { display: flex; gap: 10px; align-items: center; font-weight: 560; color: var(--ink-2); }
+  li :global(svg) { color: var(--brand-500); flex: none; }
+  .more { display: inline-flex; align-items: center; gap: 6px; font-weight: 650; color: var(--brand-600); margin-top: 4px; }
+  .shot { border-radius: 16px; overflow: hidden; border: 1px solid var(--line); aspect-ratio: 16 / 10; background: var(--bg-2); }
+  .shot :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: top left; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+  .row:hover .shot :global(img) { transform: scale(1.03); }
+  @media (max-width: 1023px) { .row { grid-template-columns: 1fr; } .row.flip .copy { order: 0; } }
+</style>

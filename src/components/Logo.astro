@@ -1,0 +1,19 @@
+---
+interface Props { dark?: boolean }
+const { dark = false } = Astro.props;
+---
+<span class:list={['logo', { dark }]}>
+  <svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
+    <defs>
+      <linearGradient id="lg-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#39a48c"/><stop offset="1" stop-color="#0f3536"/></linearGradient>
+    </defs>
+    <rect width="40" height="40" rx="11" fill="url(#lg-a)"/>
+    <path d="M13 29V11h8.2a5.8 5.8 0 0 1 0 11.6H13" fill="none" stroke="#eaf4f1" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="27.5" cy="28.5" r="2.6" fill="#86e3c7"/>
+  </svg>
+  <span class="word">PSP</span>
+</span>
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 760; font-size: 21px; letter-spacing: -.03em; color: var(--ink); }
+  .logo.dark { color: #fff; }
+</style>

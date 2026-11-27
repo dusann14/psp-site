@@ -1,0 +1,487 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Browser from '../components/Browser.astro';
+import Phone from '../components/Phone.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import Cta from '../components/Cta.astro';
+import { SITE, url, demoHref } from '../config';
+import { features } from '../data/features';
+import { screen } from '../data/screens';
+
+const marquee = ['e-Fakture na SEF-u', 'Fiskalni računi preko QR koda', 'Izveštaji u Word-u i PDF-u', 'Srpski · English · Русский', 'Telefon, tablet i računar', 'Audit svakog događaja', 'Više kompanija u jednoj instalaciji', 'Alfresco arhiva dokumenata', 'Obaveštenja uživo', 'Svetla i tamna tema'];
+
+const hubNodes = [
+  { label: 'Klijenti', icon: 'users', x: 50, y: 6 },
+  { label: 'Rad i sati', icon: 'clock', x: 90, y: 28 },
+  { label: 'Fakture i SEF', icon: 'invoice', x: 90, y: 72 },
+  { label: 'Troškovi', icon: 'receipt', x: 50, y: 94 },
+  { label: 'Dokumenti', icon: 'folder', x: 10, y: 72 },
+  { label: 'Tim', icon: 'team', x: 10, y: 28 }
+] as const;
+
+const bento = [
+  { f: features[0], shot: 'matter', cls: 'wide' },
+  { f: features[1], shot: 'invoices-out', cls: 'tall' },
+  { f: features[2], shot: 'expense', cls: '' },
+  { f: features[3], shot: 'categories', cls: '' },
+  { f: features[4], shot: 'feed', cls: '' },
+  { f: features[5], shot: 'audit', cls: 'wide' }
+] as const;
+
+const flow = [
+  { n: '01', title: 'Skenirajte račun', text: 'Kamerom telefona, slikom ili PDF-om. QR kod se pronalazi i na izgužvanom računu.' },
+  { n: '02', title: 'Podaci stižu sami', text: 'Prodavac, PIB, stavke, porezi i iznos dolaze sa sajta Poreske uprave za par sekundi.' },
+  { n: '03', title: 'Odobrenje u dva klika', text: 'Izabrani odobravaoci dobijaju zadatak, a brojač u meniju se menja uživo.' },
+  { n: '04', title: 'Prefakturisanje klijentu', text: 'Odobren trošak ide na predmet i ulazi u sledeću fakturu koja odlazi na SEF.' }
+];
+
+const stats = [
+  { value: '5', label: 'vrsta dokumenata za fakturisanje' },
+  { value: '3', label: 'jezika, menjaju se u letu' },
+  { value: '0', label: 'ručnog prepisivanja računa' },
+  { value: '1', label: 'mesto za ceo posao kancelarije' }
+];
+
+const security = [
+  { icon: 'users', title: 'Uloge', text: 'Administrator, partner, zaposleni, finansije i HR.' },
+  { icon: 'layers', title: 'Odvojene kompanije', text: 'Više pravnih lica, a podaci svakog strogo odvojeni.' },
+  { icon: 'search', title: 'Audit', text: 'Ko je, šta i kada uradio, za svaki važan događaj.' },
+  { icon: 'shield', title: 'Vaša instalacija', text: 'Sopstvena instalacija i baza za svakog klijenta.' }
+] as const;
+
+const faq = [
+  { q: 'Za koga je PSP?', a: 'Za advokatske kancelarije, konsultantske i druge firme koje rade po predmetima ili projektima i naplaćuju rad, a posluju u Srbiji i šalju fakture preko SEF-a.' },
+  { q: 'Da li PSP šalje fakture direktno na SEF?', a: 'Da. Fakture, avansni računi i knjižna odobrenja se šalju direktno na Sistem e-faktura, a ulazne fakture se preuzimaju automatski.' },
+  { q: 'Kako radi unos troškova sa fiskalnog računa?', a: 'Zaposleni telefonom skenira QR kod računa ili otpremi sliku ili PDF. PSP preuzima podatke sa sajta Poreske uprave, a trošak ide na odobrenje i može se prefakturisati klijentu.' },
+  { q: 'Da li radi na telefonu?', a: 'Da. PSP je prilagođen telefonu, tabletu i računaru i radi u pregledaču, bez instalacije.' },
+  { q: 'Gde se čuvaju podaci?', a: 'Svaki klijent dobija sopstvenu instalaciju i bazu podataka. Dokumenti se čuvaju u Alfresco sistemu za upravljanje dokumentima.' },
+  { q: 'Mogu li da vodim više firmi?', a: 'Možete. Jedna instalacija podržava više pravnih lica iste organizacije, a korisnik bira kompaniju u kojoj radi.' }
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: SITE.fullName,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    description: SITE.description,
+    inLanguage: ['sr-Latn', 'en', 'ru'],
+    featureList: features.map((f) => f.name),
+    url: new URL(url('/'), Astro.site).href
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } }))
+  }
+];
+---
+<Base title={`${SITE.name} — softver za advokatske i konsultantske kancelarije`} description={SITE.description} jsonLd={jsonLd}>
+
+  <section class="hero on-dark">
+    <div class="hero-bg" aria-hidden="true"><div class="aurora a1"></div><div class="aurora a2"></div><div class="aurora a3"></div><div class="lines"></div><div class="noise"></div></div>
+    <div class="container hero-copy">
+      <a href={url('/funkcionalnosti/troskovi-fiskalni-racuni/')} class="announce reveal">
+        <span class="new">Novo</span> Troškovi sa fiskalnih računa preko QR koda <Icon name="arrow" size={16} />
+      </a>
+      <h1 class="h-display reveal" style="--d:.08s">Ceo posao kancelarije.<br /><span class="serif grad">Jedna aplikacija.</span></h1>
+      <p class="lead reveal" style="--d:.16s">Predmeti, evidencija rada, fakture sa direktnim slanjem na SEF, troškovi sa fiskalnih računa, dokumenti i tim. Sve povezano oko predmeta, za advokatske i konsultantske kancelarije.</p>
+      <div class="hero-cta reveal" style="--d:.24s">
+        <a href={demoHref} class="btn btn-primary">Zakaži demo <Icon name="arrow" /></a>
+        <a href={url('/funkcionalnosti/')} class="btn btn-ghost-dark">Pogledaj funkcionalnosti</a>
+      </div>
+      <ul class="hero-proof reveal" style="--d:.32s">
+        <li><Icon name="check" size={18} /> Direktno na SEF</li>
+        <li><Icon name="check" size={18} /> Radi u pregledaču</li>
+        <li><Icon name="check" size={18} /> Vaša instalacija i baza</li>
+      </ul>
+    </div>
+    <div class="container hero-stage" data-tilt>
+      <div class="tilt">
+        <Browser src={screen('dashboard')} alt="PSP pregled kompanije: naplativi sati, iskorišćenost, fakturisano, naplaćeno i nenaplaćeno" eager />
+        <div class="chip c1"><span class="chip-ico ok"><Icon name="check" size={18} /></span><span><strong>Faktura 2161</strong><small>Poslata na SEF</small></span></div>
+        <div class="chip c2"><span class="chip-ico"><Icon name="receipt" size={18} /></span><span><strong>9.227,00 RSD</strong><small>Trošak odobren</small></span></div>
+        <div class="chip c3"><span class="chip-ico warm"><Icon name="bell" size={18} /></span><span><strong>Zahtev za odmor</strong><small>Čeka vaše odobrenje</small></span><span class="badge">3</span></div>
+        <div class="hero-phone"><Phone src={screen('m-dashboard-dark')} alt="PSP pregled na telefonu, tamna tema" eager /></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-label="Ključne mogućnosti">
+    <div class="track">
+      {[0, 1].map((k) => (
+        <ul aria-hidden={k === 1 ? 'true' : undefined}>
+          {marquee.map((m) => <li><Icon name="sparkle" size={16} />{m}</li>)}
+        </ul>
+      ))}
+    </div>
+  </div>
+
+  <section class="section problem">
+    <div class="container split">
+      <div class="section-head reveal">
+        <span class="eyebrow">Zašto PSP</span>
+        <h2 class="h-1">Previše alata, nijedna veza. <span class="serif grad-dark">Ili jedan predmet.</span></h2>
+        <p class="lead">Sati u tabeli, fakture u knjigovodstvenom programu, dokumenti u deljenim folderima, odobrenja u mejlu. U PSP-u se sve vezuje za predmet: ko radi, koliko, šta je fakturisano, plaćeno i potrošeno, i gde su dokumenti.</p>
+        <ul class="before">
+          <li><Icon name="x" size={16} /> Tabele za sate i honorare</li>
+          <li><Icon name="x" size={16} /> Ručno prepisivanje faktura na SEF</li>
+          <li><Icon name="x" size={16} /> Računi troškova u fioci</li>
+          <li><Icon name="x" size={16} /> Zahtevi za odmor mejlom</li>
+        </ul>
+      </div>
+      <div class="hub reveal" style="--d:.1s" role="img" aria-label="Predmet je povezan sa klijentima, radom, fakturama, troškovima, dokumentima i timom">
+        <svg class="hub-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          {hubNodes.map((n) => <line x1="50" y1="50" x2={n.x} y2={n.y} />)}
+        </svg>
+        <div class="hub-ring r1"></div><div class="hub-ring r2"></div>
+        <div class="hub-core"><Icon name="briefcase" size={30} /><strong>Predmet</strong></div>
+        {hubNodes.map((n, i) => (
+          <div class="hub-node" style={`--x:${n.x}%;--y:${n.y}%;--i:${i}`}><Icon name={n.icon} size={18} />{n.label}</div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section features-sec" id="funkcionalnosti">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Funkcionalnosti</span>
+        <h2 class="h-1">Sve što kancelariji treba, <span class="serif grad-dark">ništa što joj smeta.</span></h2>
+        <p class="lead">Šest celina koje rade zajedno, od prvog sastanka sa klijentom do naplaćene fakture.</p>
+      </div>
+      <div class="bento">
+        {bento.map(({ f, shot, cls }, i) => (
+          <a href={url(`/funkcionalnosti/${f.slug}/`)} class:list={['tile', 'reveal', cls]} style={`--d:${(i % 3) * 0.08}s`}>
+            <div class="tile-copy">
+              <span class="tile-ico"><Icon name={f.icon} /></span>
+              <h3 class="h-3">{f.name}</h3>
+              <p>{f.short}</p>
+              <span class="more">Saznajte više <Icon name="arrow" size={16} /></span>
+            </div>
+            <div class="tile-shot">
+              <Picture src={screen(shot)} alt={`${f.name} u aplikaciji PSP`} formats={['avif', 'webp']} widths={[640, 960, 1440]} sizes="(max-width: 767px) 100vw, 640px" loading="lazy" />
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section flow-sec on-dark" id="kako-radi">
+    <div class="flow-bg" aria-hidden="true"></div>
+    <div class="container flow-grid">
+      <div>
+        <div class="section-head reveal">
+          <span class="eyebrow">Kako radi</span>
+          <h2 class="h-1">Od fiskalnog računa do fakture, <span class="serif grad">za minut.</span></h2>
+          <p class="lead">Najbolji primer kako PSP povezuje stvari: trošak sa terena završava na fakturi klijentu bez ijednog prepisanog broja.</p>
+        </div>
+        <ol class="steps">
+          {flow.map((s, i) => (
+            <li class="step reveal" style={`--d:${i * 0.08}s`}>
+              <span class="num">{s.n}</span>
+              <div><h3 class="h-3">{s.title}</h3><p>{s.text}</p></div>
+            </li>
+          ))}
+        </ol>
+        <a href={url('/funkcionalnosti/troskovi-fiskalni-racuni/')} class="btn btn-ghost-dark reveal">Više o troškovima <Icon name="arrow" /></a>
+      </div>
+      <div class="flow-visual reveal" style="--d:.1s">
+        <div class="scan-phone">
+          <Phone src={screen('m-expense-new')} alt="Novi trošak na telefonu: skeniranje QR koda, slika ili PDF računa ili ručni unos" />
+          <div class="scan-beam" aria-hidden="true"></div>
+        </div>
+        <div class="flow-card fc1"><span class="chip-ico ok"><Icon name="sparkle" size={18} /></span><span><strong>Drina Auto d.o.o.</strong><small>Podaci preuzeti sa sajta Poreske uprave</small></span></div>
+        <div class="flow-card fc2"><span class="chip-ico"><Icon name="briefcase" size={18} /></span><span><strong>Ugovor o pružanju usluga</strong><small>Trošak dodat na predmet</small></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compare-sec">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Dizajn</span>
+        <h2 class="h-1">Lepo i danju <span class="serif grad-dark">i noću.</span></h2>
+        <p class="lead">Pregledan interfejs, svetla i tamna tema, tri jezika. Povucite klizač.</p>
+      </div>
+      <div class="compare reveal" data-compare style="--x:50%">
+        <div class="cmp-layer"><Picture src={screen('dashboard-dark')} alt="PSP pregled u tamnoj temi" formats={['avif', 'webp']} widths={[960, 1440, 2000, 2880]} sizes="(max-width: 1240px) 100vw, 1200px" loading="lazy" /></div>
+        <div class="cmp-layer top"><Picture src={screen('dashboard')} alt="PSP pregled u svetloj temi" formats={['avif', 'webp']} widths={[960, 1440, 2000, 2880]} sizes="(max-width: 1240px) 100vw, 1200px" loading="lazy" /></div>
+        <div class="cmp-handle" aria-hidden="true"><span><Icon name="arrow" size={16} /><Icon name="arrow" size={16} /></span></div>
+        <input type="range" min="0" max="100" value="50" aria-label="Uporedi svetlu i tamnu temu" />
+        <span class="cmp-tag l">Svetla</span><span class="cmp-tag r">Tamna</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-sec">
+    <div class="container stats">
+      {stats.map((s, i) => (
+        <div class="stat reveal" style={`--d:${i * 0.08}s`}><span class="stat-v">{s.value}</span><span class="stat-l">{s.label}</span></div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section devices" id="svuda">
+    <div class="container devices-grid">
+      <div class="fan reveal">
+        <div class="ph p1"><Phone src={screen('m-matters')} alt="Lista predmeta na telefonu" /></div>
+        <div class="ph p2"><Phone src={screen('m-dashboard')} alt="Pregled kompanije na telefonu" /></div>
+        <div class="ph p3"><Phone src={screen('m-expense')} alt="Detalj troška na telefonu" /></div>
+      </div>
+      <div class="section-head reveal" style="--d:.1s">
+        <span class="eyebrow">Svuda sa vama</span>
+        <h2 class="h-1">Kancelarija <span class="serif grad-dark">u džepu.</span></h2>
+        <p class="lead">PSP radi u pregledaču na telefonu, tabletu i računaru, bez instalacije. Na sudu, kod klijenta ili na putu.</p>
+        <ul class="ticks">
+          <li><Icon name="phone" size={20} /> Prilagođen svakom ekranu</li>
+          <li><Icon name="scan" size={20} /> Skeniranje računa kamerom</li>
+          <li><Icon name="bell" size={20} /> Zadaci i obaveštenja uživo</li>
+          <li><Icon name="globe" size={20} /> Srpski, engleski i ruski</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section sec-sec on-dark" id="bezbednost">
+    <div class="container">
+      <div class="sec-top">
+        <div class="section-head reveal">
+          <span class="eyebrow">Bezbednost</span>
+          <h2 class="h-1">Podaci klijenata <span class="serif grad">su svetinja.</span></h2>
+          <p class="lead">Advokatska tajna nije opcija. Zato svako vidi samo ono što sme, svaka važna akcija ostaje zabeležena, a vaši podaci žive u vašoj instalaciji.</p>
+          <a href={url('/funkcionalnosti/bezbednost/')} class="btn btn-ghost-dark">Kako štitimo podatke <Icon name="arrow" /></a>
+        </div>
+        <div class="sec-cards">
+          {security.map((s, i) => (
+            <div class="sec-card reveal" style={`--d:${i * 0.08}s`}><span class="tile-ico dark"><Icon name={s.icon} /></span><h3 class="h-3">{s.title}</h3><p>{s.text}</p></div>
+          ))}
+        </div>
+      </div>
+      <div class="sec-shot reveal"><Browser src={screen('audit')} alt="Audit dnevnik događaja u aplikaciji PSP" /></div>
+    </div>
+  </section>
+
+  <section class="section faq-sec" id="pitanja">
+    <div class="container faq-grid">
+      <div class="section-head reveal">
+        <span class="eyebrow">Pitanja</span>
+        <h2 class="h-1">Česta <span class="serif grad-dark">pitanja.</span></h2>
+        <p class="lead">Niste našli odgovor? Pišite nam na <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+      </div>
+      <div class="reveal" style="--d:.1s"><Faq items={faq} /></div>
+    </div>
+  </section>
+
+  <Cta />
+</Base>
+
+<script>
+  const stage = document.querySelector<HTMLElement>('[data-tilt]');
+  if (stage && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = stage.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, 1 - (r.top - window.innerHeight * 0.15) / (window.innerHeight * 0.75)));
+      stage.style.setProperty('--p', p.toFixed(3));
+    };
+    update();
+    window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener('resize', update);
+  } else stage?.style.setProperty('--p', '1');
+
+  document.querySelectorAll<HTMLElement>('[data-compare]').forEach((box) => {
+    const input = box.querySelector('input');
+    input?.addEventListener('input', () => box.style.setProperty('--x', `${input.value}%`));
+  });
+</script>
+
+<style>
+  .hero { position: relative; overflow-x: clip; z-index: 1; color: var(--on-dark); padding-top: calc(var(--header-h) + clamp(48px, 8vw, 96px)); isolation: isolate; }
+  .hero-bg { position: absolute; inset: 0 0 clamp(110px, 17vw, 250px) 0; z-index: -1; overflow: hidden; background: var(--brand-950); }
+  .aurora { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .7; animation: drift 18s ease-in-out infinite alternate; }
+  .a1 { width: 60vw; height: 60vw; left: -15vw; top: -30vw; background: radial-gradient(closest-side, #1f7a6a, transparent); }
+  .a2 { width: 50vw; height: 50vw; right: -12vw; top: -10vw; background: radial-gradient(closest-side, #2b6f86, transparent); animation-delay: -6s; opacity: .45; }
+  .a3 { width: 40vw; height: 40vw; left: 30vw; top: 30vw; background: radial-gradient(closest-side, rgba(243, 182, 94, .35), transparent); animation-delay: -12s; opacity: .5; }
+  .lines { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px); background-size: 72px 72px; mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, #000 30%, transparent 75%); }
+  .noise { position: absolute; inset: 0; opacity: .08; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  @keyframes drift { to { transform: translate3d(6vw, 4vw, 0) scale(1.15); } }
+
+  .hero-copy { display: grid; justify-items: center; text-align: center; gap: 26px; }
+  .hero-copy .h-display { max-width: 1000px; }
+  .hero-copy .lead { max-width: 720px; }
+  .announce { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); font-size: 14px; color: var(--on-dark-2); transition: border-color .2s, background .2s; backdrop-filter: blur(6px); }
+  .announce:hover { border-color: rgba(134, 227, 199, .4); background: rgba(255, 255, 255, .09); color: #fff; }
+  .new { padding: 3px 10px; border-radius: 999px; background: var(--mint); color: var(--brand-950); font-weight: 700; font-size: 12px; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .hero-proof { list-style: none; padding: 0; display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; font-size: 14px; color: var(--on-dark-2); }
+  .hero-proof li { display: inline-flex; align-items: center; gap: 6px; }
+  .hero-proof :global(svg) { color: var(--mint); }
+
+  .hero-stage { --p: 0; margin-top: clamp(48px, 7vw, 88px); perspective: 2200px; padding-bottom: 0; }
+  .tilt { position: relative; max-width: 1120px; margin-inline: auto; transform-origin: 50% 0; transform: rotateX(calc((1 - var(--p)) * 22deg)) scale(calc(.9 + var(--p) * .1)) translateY(calc((1 - var(--p)) * 20px)); will-change: transform; }
+  .tilt::before { content: ''; position: absolute; inset: 10% 5% -5%; background: radial-gradient(closest-side, rgba(134, 227, 199, .35), transparent); filter: blur(40px); z-index: -1; }
+  .chip { position: absolute; display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; border-radius: 16px; background: rgba(255, 255, 255, .92); color: var(--ink); box-shadow: var(--shadow-lg); backdrop-filter: blur(10px); animation: float 6s ease-in-out infinite; font-size: 14px; line-height: 1.3; }
+  .chip strong { display: block; font-weight: 680; }
+  .chip small { display: block; color: var(--muted); font-size: 12.5px; }
+  .chip-ico { flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--mint-soft); color: var(--brand-600); }
+  .chip-ico.ok { background: #dcf5e8; color: #1f8a5b; }
+  .chip-ico.warm { background: var(--amber-soft); color: #a86518; }
+  .badge { margin-left: 4px; min-width: 22px; height: 22px; border-radius: 999px; background: var(--rose); color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+  .c1 { left: -4%; top: 22%; }
+  .c2 { right: -5%; top: 8%; animation-delay: -2s; }
+  .c3 { left: 6%; bottom: 22%; animation-delay: -4s; }
+  .hero-phone { position: absolute; right: -2%; bottom: 6%; width: clamp(130px, 17%, 210px); transform: rotate(4deg); }
+  @keyframes float { 50% { transform: translateY(-10px); } }
+
+  .marquee { position: relative; z-index: 0; border-bottom: 1px solid var(--line); overflow: hidden; padding-top: 56px; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .track { display: flex; width: max-content; animation: slide 45s linear infinite; padding-bottom: 28px; }
+  .marquee:hover .track { animation-play-state: paused; }
+  .track ul { list-style: none; display: flex; gap: 44px; padding: 0 22px; }
+  .track li { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+  .track :global(svg) { color: var(--brand-400); }
+  @keyframes slide { to { transform: translateX(-50%); } }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+  .split .section-head { margin-bottom: 0; }
+  .before { list-style: none; padding: 0; display: grid; gap: 10px; margin-top: 8px; }
+  .before li { display: flex; align-items: center; gap: 10px; color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(224, 113, 95, .5); }
+  .before :global(svg) { color: var(--rose); flex: none; }
+
+  .hub { position: relative; aspect-ratio: 1; width: 100%; max-width: 520px; margin-inline: auto; }
+  .hub-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .hub-lines line { stroke: var(--brand-400); stroke-width: .35; stroke-dasharray: 1.2 1.6; vector-effect: non-scaling-stroke; stroke-width: 1.5; opacity: .55; animation: dash 3s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset: -28; } }
+  .hub-ring { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 1px dashed var(--line-2); transform: translate(-50%, -50%); }
+  .r1 { width: 58%; height: 58%; animation: spin 60s linear infinite; }
+  .r2 { width: 84%; height: 84%; border-style: solid; border-color: var(--line); }
+  @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+  .hub-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 34%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 30% 25%, var(--brand-500), var(--brand-800)); color: #fff; display: grid; place-content: center; justify-items: center; gap: 6px; box-shadow: 0 30px 60px -20px rgba(20, 74, 72, .6), 0 0 0 10px rgba(57, 164, 140, .1), 0 0 0 22px rgba(57, 164, 140, .06); font-size: clamp(16px, 2vw, 20px); animation: pulse 4s ease-in-out infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 30px 60px -20px rgba(20, 74, 72, .6), 0 0 0 16px rgba(57, 164, 140, .12), 0 0 0 34px rgba(57, 164, 140, .05); } }
+  .hub-node { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 14px; font-weight: 640; white-space: nowrap; animation: bob 5s ease-in-out infinite; animation-delay: calc(var(--i) * -.8s); }
+  .hub-node :global(svg) { color: var(--brand-500); }
+  @keyframes bob { 50% { transform: translate(-50%, calc(-50% - 6px)); } }
+
+  .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .tile { position: relative; display: flex; flex-direction: column; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); overflow: hidden; min-height: 420px; transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s, border-color .35s; }
+  .tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--line-2); }
+  .tile.wide { grid-column: span 2; flex-direction: row; }
+  .tile.tall { grid-row: span 2; }
+  .tile-copy { padding: 30px 30px 20px; display: grid; gap: 10px; align-content: start; }
+  .tile.wide .tile-copy { width: 42%; flex: none; padding: 36px; }
+  .tile-copy p { color: var(--muted); font-size: 15.5px; }
+  .tile-ico { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--mint-soft); color: var(--brand-600); margin-bottom: 6px; }
+  .tile-ico.dark { background: rgba(134, 227, 199, .12); color: var(--mint); }
+  .more { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 650; color: var(--brand-600); margin-top: 6px; }
+  .more :global(svg) { transition: transform .2s; }
+  .tile:hover .more :global(svg) { transform: translateX(4px); }
+  .tile-shot { flex: 1; position: relative; margin: 0 0 0 30px; border-radius: 14px 0 0 0; overflow: hidden; border: 1px solid var(--line); border-right: 0; border-bottom: 0; min-height: 200px; background: var(--bg-2); }
+  .tile.wide .tile-shot { margin: 36px 0 0 0; }
+  .tile.wide .tile-shot :global(img) { left: -22%; width: 128%; }
+  .tile.tall .tile-shot :global(img) { left: -30%; width: 260%; }
+  .tile-shot :global(img) { position: absolute; top: 0; left: -34%; width: 175%; max-width: none; height: auto; transform-origin: 0 0; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+  .tile:hover .tile-shot :global(img) { transform: scale(1.04); }
+
+  .flow-sec { background: var(--brand-950); color: var(--on-dark); overflow: hidden; isolation: isolate; }
+  .flow-bg { position: absolute; inset: 0; z-index: -1; background: radial-gradient(800px 500px at 85% 30%, rgba(57, 164, 140, .25), transparent 70%), radial-gradient(600px 400px at 10% 90%, rgba(243, 182, 94, .1), transparent 70%); }
+  .flow-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+  .steps { list-style: none; padding: 0; display: grid; gap: 6px; margin-bottom: 36px; counter-reset: s; }
+  .step { display: flex; gap: 22px; padding: 20px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
+  .step p { color: var(--on-dark-2); margin-top: 6px; font-size: 16px; }
+  .num { flex: none; font-family: var(--serif); font-style: italic; font-size: 34px; line-height: 1; color: var(--mint); width: 48px; }
+  .flow-visual { position: relative; display: grid; place-items: center; padding: 40px 0; }
+  .scan-phone { position: relative; width: min(300px, 70%); }
+  .scan-beam { position: absolute; left: 10%; right: 10%; top: 20%; height: 3px; border-radius: 3px; background: linear-gradient(90deg, transparent, var(--mint), transparent); box-shadow: 0 0 20px 4px rgba(134, 227, 199, .6); animation: beam 3.2s ease-in-out infinite; }
+  @keyframes beam { 50% { top: 62%; } }
+  .flow-card { position: absolute; display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; border-radius: 16px; background: rgba(255, 255, 255, .95); color: var(--ink); box-shadow: var(--shadow-lg); font-size: 14px; line-height: 1.3; animation: float 6s ease-in-out infinite; max-width: 270px; }
+  .flow-card strong { display: block; font-weight: 680; }
+  .flow-card small { display: block; color: var(--muted); font-size: 12.5px; }
+  .fc1 { left: -4%; top: 18%; }
+  .fc2 { right: -4%; bottom: 16%; animation-delay: -3s; }
+
+  .compare { position: relative; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-lg), 0 0 0 1px rgba(11, 33, 35, .08); aspect-ratio: 16 / 10; user-select: none; }
+  .cmp-layer { position: absolute; inset: 0; }
+  .cmp-layer :global(img), .cmp-layer :global(picture) { width: 100%; height: 100%; display: block; object-fit: cover; object-position: top left; }
+  .cmp-layer.top { clip-path: inset(0 calc(100% - var(--x)) 0 0); }
+  .cmp-handle { position: absolute; top: 0; bottom: 0; left: var(--x); width: 2px; background: #fff; box-shadow: 0 0 0 1px rgba(11, 33, 35, .15); transform: translateX(-1px); pointer-events: none; }
+  .cmp-handle span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 52px; height: 52px; border-radius: 50%; background: #fff; box-shadow: var(--shadow-lg); display: flex; align-items: center; justify-content: center; color: var(--brand-700); }
+  .cmp-handle span :global(svg:first-child) { transform: rotate(180deg) translateX(-2px); }
+  .cmp-handle span :global(svg) { width: 14px; height: 14px; }
+  .compare input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .compare input:focus-visible + .cmp-tag { outline: 2px solid var(--brand-400); }
+  .cmp-tag { position: absolute; bottom: 16px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 650; background: rgba(255, 255, 255, .9); color: var(--ink); pointer-events: none; }
+  .cmp-tag.l { left: 16px; } .cmp-tag.r { right: 16px; background: rgba(10, 38, 39, .85); color: #fff; }
+
+  .stats-sec { padding-bottom: clamp(24px, 4vw, 48px); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .stat { padding: 40px 28px; display: grid; gap: 8px; border-left: 1px solid var(--line); }
+  .stat:first-child { border-left: 0; }
+  .stat-v { font-size: clamp(48px, 6vw, 76px); line-height: 1; font-weight: 750; letter-spacing: -.05em; background: linear-gradient(180deg, var(--brand-500), var(--brand-800)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stat-l { color: var(--muted); font-size: 15px; max-width: 200px; }
+
+  .devices { overflow-x: clip; }
+  .devices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+  .devices-grid .section-head { margin-bottom: 0; }
+  .fan { position: relative; height: clamp(440px, 46vw, 600px); }
+  .ph { position: absolute; width: 42%; top: 50%; left: 50%; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+  .p1 { transform: translate(-115%, -46%) rotate(-9deg); }
+  .p2 { transform: translate(-50%, -54%); z-index: 2; }
+  .p3 { transform: translate(15%, -46%) rotate(9deg); }
+  .fan:hover .p1 { transform: translate(-125%, -46%) rotate(-12deg); }
+  .fan:hover .p3 { transform: translate(25%, -46%) rotate(12deg); }
+  .ticks { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+  .ticks li { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15.5px; padding: 14px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+  .ticks :global(svg) { color: var(--brand-500); flex: none; }
+
+  .sec-sec { background: linear-gradient(180deg, var(--brand-900), var(--brand-950)); color: var(--on-dark); overflow-x: clip; z-index: 1; }
+  .sec-top { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 80px); align-items: start; }
+  .sec-top .section-head { margin-bottom: 0; justify-items: start; }
+  .sec-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .sec-card { padding: 26px; border-radius: 20px; background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .09); display: grid; gap: 6px; }
+  .sec-card p { color: var(--on-dark-2); font-size: 15px; }
+  .sec-shot { margin-top: clamp(48px, 7vw, 88px); margin-bottom: -18%; }
+
+  .faq-sec { padding-top: clamp(140px, 18vw, 260px); }
+  .faq-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .faq-grid .section-head { position: sticky; top: calc(var(--header-h) + 32px); }
+  .link { color: var(--brand-600); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+
+  @media (max-width: 1023px) {
+    .split, .flow-grid, .devices-grid, .sec-top, .faq-grid { grid-template-columns: 1fr; }
+    .faq-grid .section-head { position: static; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .tile.wide { grid-column: span 2; }
+    .tile.tall { grid-row: auto; }
+    .devices-grid .fan { order: 2; width: 100%; max-width: 500px; height: 560px; margin: 24px auto 0; }
+    .c1 { left: 0; } .c2 { right: 0; } .hero-phone { right: 1%; }
+  }
+  @media (max-width: 767px) {
+    .bento { grid-template-columns: 1fr; }
+    .tile.wide { grid-column: auto; flex-direction: column; }
+    .tile.wide .tile-copy { width: auto; padding: 26px 26px 18px; }
+    .tile.wide .tile-shot { margin: 0 0 0 26px; }
+    .tile { min-height: 380px; }
+    .tile-copy { padding: 26px 26px 18px; }
+    .tile-shot { margin-left: 26px; }
+    .chip { display: none; }
+    .hero-phone { width: 26%; right: 2%; bottom: -4%; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat { padding: 28px 16px; }
+    .stat:nth-child(3) { border-left: 0; }
+    .stat:nth-child(n + 3) { border-top: 1px solid var(--line); }
+    .ticks { grid-template-columns: 1fr; }
+    .sec-cards { grid-template-columns: 1fr; }
+    .hub { max-width: 290px; }
+    .hub-node { font-size: 12px; padding: 7px 10px; gap: 6px; }
+    .hub-node :global(svg) { width: 15px; height: 15px; }
+    .fc1 { left: 0; top: 4%; } .fc2 { right: 0; bottom: 4%; }
+    .flow-card { max-width: 230px; }
+    .compare { aspect-ratio: 4 / 3; }
+    .devices-grid .fan { height: 440px; }
+  }
+</style>

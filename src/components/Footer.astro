@@ -1,0 +1,49 @@
+---
+import Logo from './Logo.astro';
+import { SITE, url, demoHref } from '../config';
+import { features } from '../data/features';
+const year = new Date().getFullYear();
+---
+<footer class="footer on-dark">
+  <div class="container">
+    <div class="top">
+      <div class="about">
+        <Logo dark />
+        <p>{SITE.tagline}. Predmeti, rad, fakture sa SEF-om, troškovi, dokumenti i tim na jednom mestu.</p>
+        <a href={demoHref} class="btn btn-primary">Zakaži demo</a>
+      </div>
+      <nav aria-label="Funkcionalnosti">
+        <p class="label">Funkcionalnosti</p>
+        <ul>{features.map((f) => <li><a href={url(`/funkcionalnosti/${f.slug}/`)}>{f.name}</a></li>)}</ul>
+      </nav>
+      <nav aria-label="Saznajte više">
+        <p class="label">Saznajte više</p>
+        <ul>
+          <li><a href={url('/#kako-radi')}>Kako radi</a></li>
+          <li><a href={url('/#svuda')}>Na svim uređajima</a></li>
+          <li><a href={url('/#pitanja')}>Česta pitanja</a></li>
+          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="bottom">
+      <span>© {year} {SITE.name}. Sva prava zadržana.</span>
+      <span>Napravljeno u Srbiji, za kancelarije u Srbiji.</span>
+    </div>
+  </div>
+  <div class="wordmark" aria-hidden="true">PSP</div>
+</footer>
+<style>
+  .footer { position: relative; overflow: hidden; background: var(--brand-950); color: var(--on-dark); padding-top: 88px; }
+  .top { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 48px; padding-bottom: 64px; border-bottom: 1px solid rgba(255, 255, 255, .08); position: relative; z-index: 1; }
+  .about { display: grid; gap: 22px; justify-items: start; max-width: 380px; }
+  .about p { color: var(--on-dark-2); font-size: 15px; }
+  .label { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-3); margin-bottom: 18px; }
+  ul { list-style: none; padding: 0; display: grid; gap: 12px; }
+  ul a { color: var(--on-dark-2); font-size: 15px; transition: color .2s; overflow-wrap: anywhere; }
+  ul a:hover { color: #fff; }
+  .bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 28px 0 40px; font-size: 14px; color: var(--on-dark-3); position: relative; z-index: 1; }
+  .wordmark { position: absolute; left: 50%; bottom: -0.32em; transform: translateX(-50%); font-size: clamp(160px, 30vw, 420px); font-weight: 800; letter-spacing: -.06em; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(134, 227, 199, .09); pointer-events: none; user-select: none; }
+  @media (max-width: 767px) { .top { grid-template-columns: 1fr; gap: 40px; } }
+  @media (min-width: 768px) and (max-width: 1023px) { .top { grid-template-columns: 1fr 1fr; } .about { grid-column: 1 / -1; max-width: none; } }
+</style>

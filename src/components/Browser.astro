@@ -1,0 +1,28 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { src: ImageMetadata; alt: string; address?: string; eager?: boolean; sizes?: string; class?: string; dark?: boolean }
+const { src, alt, address = 'Petrović i partneri · PSP', eager = false, sizes = '(max-width: 1240px) 100vw, 1200px', class: className, dark = false } = Astro.props;
+---
+<figure class:list={['browser', className, { dark }]}>
+  <div class="chrome" aria-hidden="true">
+    <span class="dots"><i></i><i></i><i></i></span>
+    <span class="address"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>{address}</span>
+    <span class="spacer"></span>
+  </div>
+  <Picture src={src} alt={alt} formats={['avif', 'webp']} widths={[640, 960, 1440, 2000, 2880]} sizes={sizes} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} class="shot" />
+</figure>
+<style>
+  .browser { border-radius: 16px; overflow: hidden; background: #fff; box-shadow: var(--shadow-lg), 0 0 0 1px rgba(11, 33, 35, .08); }
+  .browser.dark { background: #0f1a1b; box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, .08); }
+  .chrome { height: 38px; display: flex; align-items: center; gap: 12px; padding: 0 14px; background: linear-gradient(#f7f8f6, #eef1ee); border-bottom: 1px solid var(--line); }
+  .dark .chrome { background: linear-gradient(#1a2526, #141e1f); border-bottom-color: rgba(255, 255, 255, .06); }
+  .dots { display: flex; gap: 7px; flex: 1; }
+  .dots i { width: 11px; height: 11px; border-radius: 50%; background: #e2e6e3; }
+  .dots i:nth-child(1) { background: #f0a196; } .dots i:nth-child(2) { background: #f2cf7d; } .dots i:nth-child(3) { background: #8fd3a8; }
+  .address { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 3px 14px; min-width: 0; }
+  .dark .address { background: rgba(255, 255, 255, .05); border-color: rgba(255, 255, 255, .08); color: #8aa5a0; }
+  .spacer { flex: 1; }
+  .browser :global(img) { display: block; width: 100%; height: auto; }
+  @media (max-width: 479px) { .chrome { height: 28px; } .dots i { width: 8px; height: 8px; } .address { font-size: 10px; padding: 1px 10px; } }
+</style>

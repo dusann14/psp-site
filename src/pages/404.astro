@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { url } from '../config';
+---
+<Base title="Strana nije pronađena" description="Tražena strana ne postoji." noindex>
+  <PageHero eyebrow="404" title="Ova strana se" accent="zagubila." lead="Možda je premeštena ili adresa nije tačna. Vratite se na početnu i nastavite odatle.">
+    <div slot="actions"><a href={url('/')} class="btn btn-primary">Na početnu <Icon name="arrow" /></a></div>
+    <div style="height:clamp(96px,14vw,180px)"></div>
+  </PageHero>
+</Base>

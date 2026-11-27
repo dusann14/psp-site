@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { demoHref, url } from '../config';
+interface Props { title?: string; accent?: string; text?: string }
+const { title = 'Pogledajte PSP', accent = 'uživo.', text = 'Za 30 minuta vam pokazujemo kako PSP radi na primerima iz vaše kancelarije: predmeti, fakture na SEF-u i troškovi sa fiskalnih računa.' } = Astro.props;
+---
+<section class="cta-wrap">
+  <div class="container">
+    <div class="cta on-dark reveal">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="grid-bg" aria-hidden="true"></div>
+      <div class="content">
+        <span class="eyebrow">Demo</span>
+        <h2 class="h-1">{title} <span class="serif grad">{accent}</span></h2>
+        <p class="lead">{text}</p>
+        <div class="buttons">
+          <a href={demoHref} class="btn btn-primary">Zakaži demo <Icon name="arrow" /></a>
+          <a href={url('/funkcionalnosti/')} class="btn btn-ghost-dark">Sve funkcionalnosti</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .cta-wrap { padding-block: 40px clamp(72px, 9vw, 120px); }
+  .cta { position: relative; overflow: hidden; border-radius: var(--radius-xl); background: linear-gradient(150deg, var(--brand-800), var(--brand-950)); color: var(--on-dark); padding: clamp(48px, 8vw, 104px) clamp(24px, 6vw, 88px); text-align: center; isolation: isolate; }
+  .glow { position: absolute; inset: -40% -10% auto; height: 120%; background: radial-gradient(closest-side, rgba(57, 164, 140, .55), transparent 70%); filter: blur(20px); z-index: -1; animation: breathe 9s ease-in-out infinite; }
+  .grid-bg { position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse at center, #000 20%, transparent 70%); }
+  .content { display: grid; gap: 22px; justify-items: center; max-width: 760px; margin-inline: auto; }
+  .buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+  @keyframes breathe { 50% { transform: scale(1.12) translateY(4%); opacity: .8; } }
+</style>

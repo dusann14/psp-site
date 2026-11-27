@@ -1,0 +1,112 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { url, demoHref } from '../config';
+import { features } from '../data/features';
+const links = [
+  { href: url('/funkcionalnosti/'), label: 'Funkcionalnosti' },
+  { href: url('/#kako-radi'), label: 'Kako radi' },
+  { href: url('/funkcionalnosti/bezbednost/'), label: 'Bezbednost' },
+  { href: url('/#pitanja'), label: 'Pitanja' }
+];
+---
+<header class="site-header" data-header>
+  <div class="container bar">
+    <a href={url('/')} class="brand" aria-label="PSP početna strana"><Logo dark /></a>
+    <nav class="nav" aria-label="Glavna navigacija">
+      <div class="drop">
+        <a href={url('/funkcionalnosti/')} class="nav-link">Funkcionalnosti</a>
+        <div class="drop-panel">
+          <div class="drop-grid">
+            {features.map((f) => (
+              <a href={url(`/funkcionalnosti/${f.slug}/`)} class="drop-item">
+                <span class="drop-ico"><Icon name={f.icon} size={20} /></span>
+                <span><strong>{f.name}</strong><small>{f.short}</small></span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+      {links.slice(1).map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
+    </nav>
+    <div class="actions">
+      <a href={demoHref} class="btn btn-primary btn-sm">Zakaži demo</a>
+      <details class="mobile">
+        <summary aria-label="Otvori meni"><Icon name="menu" class="i-open" /><Icon name="close" class="i-close" /></summary>
+        <div class="sheet">
+          <p class="sheet-label">Funkcionalnosti</p>
+          {features.map((f) => (
+            <a href={url(`/funkcionalnosti/${f.slug}/`)} class="sheet-item"><Icon name={f.icon} size={20} />{f.name}</a>
+          ))}
+          <hr />
+          {links.slice(1).map((l) => <a href={l.href} class="sheet-item plain">{l.label}</a>)}
+          <a href={demoHref} class="btn btn-dark sheet-cta">Zakaži demo <Icon name="arrow" /></a>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header { position: fixed; inset: 0 0 auto; z-index: 50; height: var(--header-h); transition: background .3s, box-shadow .3s, border-color .3s; border-bottom: 1px solid transparent; }
+  .bar { height: 100%; display: flex; align-items: center; gap: 32px; }
+  .brand { flex: none; }
+  .nav { display: flex; align-items: center; gap: 4px; margin-right: auto; }
+  .nav-link { padding: 8px 14px; border-radius: 999px; font-size: 15px; font-weight: 560; color: var(--on-dark-2); transition: color .2s, background .2s; }
+  .nav-link:hover { color: #fff; background: rgba(255, 255, 255, .07); }
+  .actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .btn-sm { min-height: 40px; padding: 0 18px; font-size: 15px; }
+
+  .site-header.scrolled { background: rgba(250, 250, 247, .82); backdrop-filter: saturate(1.6) blur(16px); -webkit-backdrop-filter: saturate(1.6) blur(16px); border-bottom-color: var(--line); }
+  .site-header.scrolled :global(.logo) { color: var(--ink); }
+  .site-header.scrolled .nav-link { color: var(--ink-2); }
+  .site-header.scrolled .nav-link:hover { color: var(--ink); background: var(--bg-2); }
+  .site-header.scrolled .btn-primary { --b-bg: var(--brand-800); --b-fg: #fff; box-shadow: var(--shadow-sm); }
+  .site-header.scrolled summary { color: var(--ink); border-color: var(--line-2); }
+
+  .drop { position: relative; }
+  .drop-panel { position: absolute; top: calc(100% + 10px); left: -16px; width: 640px; padding: 10px; border-radius: 20px; background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-lg); opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .2s, transform .2s, visibility .2s; }
+  .drop-panel::before { content: ''; position: absolute; inset: -14px 0 auto; height: 14px; }
+  .drop:hover .drop-panel, .drop:focus-within .drop-panel { opacity: 1; visibility: visible; transform: none; }
+  .drop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .drop-item { display: flex; gap: 14px; padding: 14px; border-radius: 14px; color: var(--ink); transition: background .2s; }
+  .drop-item:hover { background: var(--bg-2); }
+  .drop-item strong { display: block; font-size: 15px; font-weight: 650; }
+  .drop-item small { display: block; font-size: 13px; line-height: 1.45; color: var(--muted); margin-top: 2px; }
+  .drop-ico { flex: none; width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--mint-soft); color: var(--brand-600); }
+
+  .mobile { display: none; position: relative; }
+  .mobile summary { list-style: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #fff; border: 1px solid rgba(255, 255, 255, .18); cursor: pointer; }
+  .mobile summary::-webkit-details-marker { display: none; }
+  .mobile :global(.i-close) { display: none; }
+  .mobile[open] :global(.i-close) { display: block; }
+  .mobile[open] :global(.i-open) { display: none; }
+  .sheet { position: fixed; top: calc(var(--header-h) + 8px); left: 12px; right: 12px; max-height: calc(100dvh - var(--header-h) - 24px); overflow: auto; background: #fff; border-radius: 22px; padding: 14px; box-shadow: var(--shadow-lg); border: 1px solid var(--line); display: grid; gap: 2px; }
+  .sheet-label { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 8px 12px; }
+  .sheet-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; font-weight: 600; color: var(--ink); }
+  .sheet-item :global(svg) { color: var(--brand-500); }
+  .sheet-item:hover { background: var(--bg-2); }
+  .sheet hr { border: 0; border-top: 1px solid var(--line); margin: 8px 0; }
+  .sheet-cta { margin-top: 10px; }
+
+  @media (max-width: 1023px) {
+    .nav { display: none; }
+  }
+  @media (max-width: 1023px) {
+    .mobile { display: block; }
+  }
+  @media (max-width: 479px) {
+    .actions .btn-sm { display: none; }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 12);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  document.querySelectorAll<HTMLDetailsElement>('.mobile').forEach((d) => {
+    d.addEventListener('toggle', () => header?.classList.toggle('menu-open', d.open));
+    d.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => (d.open = false)));
+  });
+</script>
